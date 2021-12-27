@@ -39,9 +39,26 @@ pop [] = Nothing
 pop xs = head xs
 
 
---TODO Task 1.7
-iexec :: Instr -> Config -> Config
-iexec = undefined 
+-- iexec functions for executing instructions
+iexec :: Instr -> Config -> Config -- in the following, pc = program counter, a = first value used, b = 2nd value used
+
+iexec (LOADI x) (pc, a, b) =  (pc + 1, a, push x b)
+
+iexec (LOAD v) (pc, a, b)
+    | Data.Map.null b = (pc + 1, a, b)
+    | isNothing(Data.Map.lookup v var) = (pc + 1, a, b)
+    | otherwise =
+        let value = Data.Map.lookup v var
+        in (pc + 1, a, push value b)
+
+iexec ADD (pc, a, b)
+    | length b <= 1 = (pc + 1, a, b)
+    | otherwise = (pc + 1, b, sum c)
+
+iexec (STORE v) (pc, a, b)
+iexec (JMP i) (pc, a, b)
+iexec (JMPLESS i) (pc, a, b)
+iexec (JMPGE i) (pc, a, b)
 
 --TODO Task 1.8
 exec :: [Instr] -> Config -> Config
