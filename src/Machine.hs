@@ -30,8 +30,14 @@ type Stack = [Int]
 type Config = (Int, State, Stack) -- (Program counter, Variables (state), Values (Stack)
 
 
---TODO Task 1.6
-type Config = ()
+-- Helper functions for iexec and exec
+push :: Int -> Stack -> Stack -- Adds specified int to the top of the stack
+push value xs = value : xs
+
+pop :: Stack -> Int -- Returns item at the stack's head, returns nothing if list is empty.
+pop [] = Nothing
+pop xs = head xs
+
 
 --TODO Task 1.7
 iexec :: Instr -> Config -> Config
