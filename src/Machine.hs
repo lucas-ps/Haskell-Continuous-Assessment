@@ -12,20 +12,23 @@ module Machine
 
 import Data.Map
 
---TODO Task 1.1
-type Vname = ()
---TODO Task 1.2
-type Val = ()
---TODO Task 1.3
-type State = ()
 
---TODO Task 1.4
+-- Defining types for the module
+type Vname = String
+type Val = Int
+type State = Map Vname Val
 data Instr =
-        IUndefined
+        LOADI
+        | LOAD
+        | ADD
+        | STORE
+        | JMP
+        | JMPLESS
+        | JMPGE
         deriving (Eq, Read, Show)
+type Stack = [Int]
+type Config = (Int, State, Stack) -- (Program counter, Variables (state), Values (Stack)
 
---TODO Task 1.5
-type Stack = ()
 
 --TODO Task 1.6
 type Config = ()
