@@ -40,15 +40,15 @@ getVal  = Data.Map.lookup -- Gets the val for a mapped variable
 
 addFirstTwoElements :: Stack -> [Int]
 addFirstTwoElements [] = []
-addFirstTwoElements (x:xs) = -- Returns the original stack with the first two items added together
+addFirstTwoElements xs = -- Returns the original stack with the first two items added together
     if length xs >= 2
         then do
             let a = xs !! 0
             let b = xs !! 1
             let result = sum [a, b]
-            result : Prelude.drop 1 xs 
-        else
-            []
+            [result]
+    else
+        []
 
 compareTwoTopmostValues :: Stack -> Bool
 compareTwoTopmostValues xs =
@@ -78,7 +78,7 @@ iexec ADD (pc, a, b)
     | otherwise = (pc + 1, a, b)
 
 iexec (STORE v) (pc, a, b)    
-    | length b == 0 = (pc + 1, a, b) -- checks if there are any items in the stack
+    | length b == 0 = (pc + 1, a, b)
     | otherwise = 
         (pc + 1, (insert v(last b) a), init b)
 
@@ -94,12 +94,16 @@ iexec (JMPGE i) (pc, a, b)
 
 --TODO Task 1.8
 exec :: [Instr] -> Config -> Config
-exec = undefined
+exec tasks (pc, a, b)
+        | length tasks <= pc = (pc, a, b)
+        | otherwise = 
+            let currentProgram = tasks !! pc
+            in exec tasks (iexec (currentProgram) (pc, a, b))
 
 -- Testing
 
 main = do
-    
+
     print $ iexec (LOADI 5) (0, empty, [])
     print $ iexec (LOAD "v1") (0, fromList [("v1", 5)] , [])
     print $ iexec ADD (0, empty, [5, 6])
@@ -107,5 +111,5 @@ main = do
     print $ iexec (JMP 5) (0, empty, [])
     print $ iexec (JMPLESS 5) (0, empty, [5, 6])
     print $ iexec (JMPGE 5) (0, empty, [5, 6])
-    --print $ exec [LOADI 1, LOADI 2, ADD] (0, empty, [])
-    --print $ exec [LOADI 1, STORE "v1 ", LOADI 2, STORE "v2"] (0, empty, [])
+    print $ exec [LOADI 1, LOADI 2, ADD] (0, empty, [])
+    print $ exec [LOADI 1, STORE "v1 ", LOADI 2, STORE "v2"] (0, empty, [])
