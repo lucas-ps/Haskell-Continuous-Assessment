@@ -32,9 +32,6 @@ type Config = (Int, State, Stack) -- (Program counter, Variables (state), Values
 
 
 -- Helper functions for iexec and exec
-getVal :: String -> State -> Maybe Int
-getVal  = Data.Map.lookup -- Gets the val for a mapped variable
-
 addFirstTwoElements :: Stack -> [Int]
 addFirstTwoElements [] = []
 addFirstTwoElements xs = -- Returns the original stack with the first two items added together
@@ -65,9 +62,9 @@ iexec :: Instr -> Config -> Config -- in the following, pc = program counter, a 
 iexec (LOADI x) (pc, a, b) =  (pc + 1, a, x : b)
 
 iexec (LOAD v) (pc, a, b)
-    | isNothing(getVal v a) = (pc + 1, a, b)
+    | isNothing(Data.Map.lookup v a) = (pc + 1, a, b)
     | otherwise =
-        let val = fromJust (getVal v a)
+        let val = fromJust (Data.Map.lookup v a)
         in (pc + 1, a, val : b)
 
 iexec ADD (pc, a, b)
