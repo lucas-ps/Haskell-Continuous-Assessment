@@ -8,7 +8,6 @@ module Machine
         Config,
         iexec,
         exec,
-        getLast
 ) where
 
 import Data.Map
@@ -51,14 +50,16 @@ addFirstTwoElements (x:xs) = -- Returns the original stack with the first two it
         else
             []
 
-getLast :: Stack -> Int
-getLast [] = error "Tried to get last item from empty stack"
-getLast (x:xs) = last xs
-
-getFirst :: Stack -> Int
-getFirst [] = error "Tried to get first item from empty stack"
-getFirst (x:xs) = head xs
-
+compareTwoTopmostValues :: Stack -> Bool
+compareTwoTopmostValues xs =
+    if length xs < 2 
+        then error "Less than 2 items in the provided stack"
+    else do
+        let x = last xs
+        let y = last (init xs)
+        if x < y
+            then True
+        else False
 
 
 -- iexec functions for executing instructions
@@ -79,13 +80,17 @@ iexec ADD (pc, a, b)
 iexec (STORE v) (pc, a, b)    
     | length b == 0 = (pc + 1, a, b) -- checks if there are any items in the stack
     | otherwise = 
-        (pc + 1, insert v (getLast b) a, init b)
+        (pc + 1, (insert v(last b) a), init b)
 
---iexec (JMP i) (pc, a, b)
+iexec (JMP i) (pc, a, b) = (pc + i + 1, a, b)
 
---iexec (JMPLESS i) (pc, a, b)
+iexec (JMPLESS i) (pc, a, b)
+    | compareTwoTopmostValues b = (pc + i + 1, a, b)
+    | otherwise = (pc + 1, a, b)
 
---iexec (JMPGE i) (pc, a, b)
+iexec (JMPGE i) (pc, a, b)
+    | not (compareTwoTopmostValues b) = (pc + i + 1, a, b)
+    | otherwise = (pc + 1, a, b)
 
 --TODO Task 1.8
 exec :: [Instr] -> Config -> Config
@@ -99,8 +104,8 @@ main = do
     print $ iexec (LOAD "v1") (0, fromList [("v1", 5)] , [])
     print $ iexec ADD (0, empty, [5, 6])
     print $ iexec (STORE "x") (0, empty, [5])
-    --print $ iexec (JMP 5) (0, empty, [])
-    --print $ iexec (JMPLESS 5) (0, empty, [5, 6])
-    --print $ iexec (JMPGE 5) (0, empty, [5, 6])
+    print $ iexec (JMP 5) (0, empty, [])
+    print $ iexec (JMPLESS 5) (0, empty, [5, 6])
+    print $ iexec (JMPGE 5) (0, empty, [5, 6])
     --print $ exec [LOADI 1, LOADI 2, ADD] (0, empty, [])
     --print $ exec [LOADI 1, STORE "v1 ", LOADI 2, STORE "v2"] (0, empty, [])
