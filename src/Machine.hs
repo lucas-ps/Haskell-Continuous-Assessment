@@ -92,7 +92,6 @@ iexec (JMPGE i) (pc, a, b)
     | not (compareTwoTopmostValues b) = (pc + i + 1, a, b)
     | otherwise = (pc + 1, a, b)
 
---TODO Task 1.8
 exec :: [Instr] -> Config -> Config
 exec tasks (pc, a, b)
         | length tasks <= pc = (pc, a, b)
