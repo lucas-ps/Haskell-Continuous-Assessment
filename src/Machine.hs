@@ -101,7 +101,7 @@ exec tasks (pc, a, b)
             in exec tasks (iexec (currentProgram) (pc, a, b))
 
 -- Testing
-
+{-
 main = do
 
     print $ iexec (LOADI 5) (0, empty, [])
@@ -113,3 +113,4 @@ main = do
     print $ iexec (JMPGE 5) (0, empty, [5, 6])
     print $ exec [LOADI 1, LOADI 2, ADD] (0, empty, [])
     print $ exec [LOADI 1, STORE "v1 ", LOADI 2, STORE "v2"] (0, empty, [])
+-}
