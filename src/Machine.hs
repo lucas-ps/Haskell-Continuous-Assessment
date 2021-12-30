@@ -32,9 +32,6 @@ type Config = (Int, State, Stack) -- (Program counter, Variables (state), Values
 
 
 -- Helper functions for iexec and exec
-addToBottom :: Int -> Stack -> Stack -- Adds specified int to the bottom of the stack, returns new stack
-addToBottom value stack = value : stack
-
 getVal :: String -> State -> Maybe Int
 getVal  = Data.Map.lookup -- Gets the val for a mapped variable
 
@@ -65,13 +62,13 @@ compareTwoTopmostValues xs =
 -- iexec functions for executing instructions
 iexec :: Instr -> Config -> Config -- in the following, pc = program counter, a = first value used, b = 2nd value used
 
-iexec (LOADI x) (pc, a, b) =  (pc + 1, a, addToBottom x b)
+iexec (LOADI x) (pc, a, b) =  (pc + 1, a, x : b)
 
 iexec (LOAD v) (pc, a, b)
     | isNothing(getVal v a) = (pc + 1, a, b)
     | otherwise =
         let val = fromJust (getVal v a)
-        in (pc + 1, a, addToBottom val b)
+        in (pc + 1, a, val : b)
 
 iexec ADD (pc, a, b)
     | length b >= 2 = (pc + 1, a, addFirstTwoElements b)
@@ -100,7 +97,7 @@ exec tasks (pc, a, b)
             in exec tasks (iexec (currentProgram) (pc, a, b))
 
 -- Testing
-{-
+
 main = do
 
     print $ iexec (LOADI 5) (0, empty, [])
@@ -112,4 +109,3 @@ main = do
     print $ iexec (JMPGE 5) (0, empty, [5, 6])
     print $ exec [LOADI 1, LOADI 2, ADD] (0, empty, [])
     print $ exec [LOADI 1, STORE "v1 ", LOADI 2, STORE "v2"] (0, empty, [])
--}
