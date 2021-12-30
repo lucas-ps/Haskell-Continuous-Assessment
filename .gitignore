@@ -23,3 +23,4 @@ cabal.project.local~
 .idea
 stack.yaml.lock
 coursework.iml
+.vscode/tasks.json
