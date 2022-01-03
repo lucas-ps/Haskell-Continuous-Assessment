@@ -55,6 +55,14 @@ compareTwoTopmostValues xs =
             then True
         else False
 
+removeTwoTopmostValues :: Stack -> Stack
+removeTwoTopmostValues xs =
+    if length xs < 2 
+        then error "Less than 2 items in the provided stack"
+    else do
+        let l1 = init xs
+        let l2 = init l1
+        l2
 
 -- iexec functions for executing instructions
 iexec :: Instr -> Config -> Config -- in the following, pc = program counter, a = first value used, b = 2nd value used
@@ -79,12 +87,20 @@ iexec (STORE v) (pc, a, b)
 iexec (JMP i) (pc, a, b) = (pc + i + 1, a, b)
 
 iexec (JMPLESS i) (pc, a, b)
-    | compareTwoTopmostValues b = (pc + i + 1, a, b)
-    | otherwise = (pc + 1, a, b)
+    | compareTwoTopmostValues b = 
+        let newB = removeTwoTopmostValues b
+        in (pc + i + 1, a, newB)
+    | otherwise = 
+        let newB = removeTwoTopmostValues b
+        in (pc + 1, a, newB)
 
 iexec (JMPGE i) (pc, a, b)
-    | not (compareTwoTopmostValues b) = (pc + i + 1, a, b)
-    | otherwise = (pc + 1, a, b)
+    | not (compareTwoTopmostValues b) = 
+        let newB = removeTwoTopmostValues b
+        in (pc + i + 1, a, newB)
+    | otherwise = 
+        let newB = removeTwoTopmostValues b
+        in (pc + 1, a, newB)
 
 exec :: [Instr] -> Config -> Config
 exec tasks (pc, a, b)
